@@ -5,6 +5,10 @@ from mic_source import MicrophoneStream
 from service.dictation_settings import DictationSettings
 from service.streaming_recognizer import StreamingRecognizer
 from DICTATION_CLIENT_VERSION import DICTATION_CLIENT_VERSION
+import pyaudio
+import numpy as np
+from scipy.io import wavfile
+import Levenshtein
 
 
 def print_results(results):
@@ -33,6 +37,25 @@ def return_results(results):
                                                           time[1].seconds, int(time[1].nanos / 10000000)))
 
 
+def get_phrases(directory = './phrases/phrases.csv'):
+    import pandas as pd
+    import numpy as np
+    df = pd.read_csv('./phrases/phrases.csv', header=None)
+
+    phrases = pd.DataFrame(df).to_numpy()
+
+    phrases_clean = []
+    for row in phrases:
+        tmp_row = []
+        for column in row:
+            if type(column) == str:
+                tmp_row.append(column)
+            # print(type(column))
+        phrases_clean.append(tmp_row)
+    phrases = np.array(phrases_clean)
+
+    return phrases
+
 def play_gif(directory):
     import pyglet
     # pick an animated gif file you have in the working directory
@@ -51,15 +74,65 @@ def play_gif(directory):
         sprite.draw()
     pyglet.app.run()
 
+
+def search_over_phrases(results_str, phrases):
+    """
+    :param results_str: string recognized from dictation
+    :param phrases: phrases to search over
+    :return: idx: index of key_phrase for gif to be displayed
+    """
+    is_found = False
+    for idx in range(len(phrases)):
+        for phrase in phrases[idx]:
+            if results_str == phrase:
+                is_found = True
+                return idx
+    if is_found == False:
+        return -1
+
 def levenshtein_classification(results_str, phrases):
     """
-
-    :param results_str:
-    :param phrases:
-    :return:
+    :param results_str: result of speech recognition
+    :param phrases: phrases to calculate levenshtein distance
+    :return: idx of key phrase
     """
     #function yet to be implemented!
-    return ':)'
+
+    is_found = False
+    dist_arr = []
+    for idx in range(len(phrases)):
+        tmp_arr = []
+        for phrase in phrases[idx]:
+            tmp_arr.append(Levenshtein.distance(results_str, phrase))
+        dist_arr.append(tmp_arr)
+    dist_arr = np.array(dist_arr)
+    idx = np.argmin(dist_arr)
+    print(idx)
+    return idx
+
+
+def mic_to_directory(file_directory='./dictation_data/dictation_data.wav', record_time=3):
+    RATE = 16000
+    CHUNK = 16000 * record_time
+
+    p = pyaudio.PyAudio()
+
+    # stream = p.open(format=pyaudio.paInt16,
+    #                 channels=1,
+    #                 rate=RATE,
+    #                 output=True)  # stream wyjsciowy (odtwarzany na sluchawkach)
+    mic_stream = p.open(format=pyaudio.paInt16,
+                        channels=1,
+                        rate=RATE,
+                        input=True,
+                        frames_per_buffer=CHUNK)
+
+    # stream.write(mic_stream.read(CHUNK))  # odtworzenie zapisanych danych
+    #    data = audio_file.readframes(CHUNK)
+    # dla odczytu z pliku
+    data = mic_stream.read(CHUNK)  # wczytanie danych z mikrofonu
+    data = np.frombuffer(data, dtype=np.int16)
+    wavfile.write(file_directory, data=data, rate=RATE)
 
 
 def create_audio_stream(args):
