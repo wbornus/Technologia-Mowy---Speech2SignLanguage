@@ -7,6 +7,8 @@ from address_provider import AddressProvider
 from os.path import join as opjoin
 from dictation.dictation_client import play_gif, mic_to_directory, search_over_phrases
 from dictation.dictation_client import levenshtein_classification, get_phrases
+import distortion_detection.distortion_detection as dd
+import time
 
 class DictationArgs:
 
@@ -42,9 +44,19 @@ if __name__ == '__main__':
 
     directory = 'dictation_data/dictation_data.wav'
 
-    mic_to_directory(file_directory=directory)  #recording voice sample
-    args = DictationArgs(directory)
-    #args = DictationArgs()
+
+    while True:
+        mic_to_directory(file_directory=directory)  #recording voice sample
+        args = DictationArgs(directory)
+        mazzny_condition = dd.is_distorted(file_directory=directory)
+        if not mazzny_condition:
+            break
+        else:
+            print('Please speak more quietly or try moving away from the microphone')
+            time.sleep(3)
+            print('speak: ')
+
+
 
 
     if args.wave is not None or args.mic:
@@ -66,6 +78,7 @@ if __name__ == '__main__':
                 play_gif(gif_dir)
             elif idx == -1:
                 idx = levenshtein_classification(results_str, phrases)
+                print(key_phrases[idx])
                 gif_dir = 'gifs/'+key_phrases[idx]+'.gif'
                 #gif_dir = 'gifs/500x500_sample(brak).gif'
                 print(gif_dir)
