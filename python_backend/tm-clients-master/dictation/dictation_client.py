@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 from argparse import ArgumentParser
-from audio_source import AudioStream
-from mic_source import MicrophoneStream
-from service.dictation_settings import DictationSettings
-from service.streaming_recognizer import StreamingRecognizer
-from DICTATION_CLIENT_VERSION import DICTATION_CLIENT_VERSION
+from dictation.audio_source import AudioStream
+from dictation.mic_source import MicrophoneStream
+from dictation.service.dictation_settings import DictationSettings
+from dictation.service.streaming_recognizer import StreamingRecognizer
+from dictation.DICTATION_CLIENT_VERSION import DICTATION_CLIENT_VERSION
 import pyaudio
 import numpy as np
 from scipy.io import wavfile
