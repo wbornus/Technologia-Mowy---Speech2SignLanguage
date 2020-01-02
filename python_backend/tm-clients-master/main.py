@@ -31,58 +31,54 @@ class DictationArgs:
 
 
 
-
-key_phrases = ['brzuch', 'gardło', 'głowa', 'serce', 'dzień_dobry', 'gorączka', 'grypa',
+def record():
+    key_phrases = ['brzuch', 'gardło', 'głowa', 'serce', 'dzień_dobry', 'gorączka', 'grypa',
                'kardiolog', 'katar', 'neurolog', 'ortopeda', 'przeziębienie', 'lekarz', 'zapalenie_płuc',
                'samopoczucie']
 
-phrases = get_phrases()
-print(phrases)
-print("speak: ")
-if __name__ == '__main__':
+    gif_dir = 'err.gif'
+    phrases = get_phrases()
+    print(phrases)
+    print("speak: ")
+    if __name__ == '__main__':
 
+        directory = 'dictation_data/dictation_data.wav'
 
-    directory = 'dictation_data/dictation_data.wav'
+        while True:
+            mic_to_directory(file_directory=directory)  # recording voice sample
+            args = DictationArgs(directory)
+            mazzny_condition = dd.is_distorted(file_directory=directory)
+            if not mazzny_condition:
+                break
+            else:
+                print('Please speak more quietly or try moving away from the microphone')
+                time.sleep(3)
+                print('speak: ')
 
+        if args.wave is not None or args.mic:
+            with create_audio_stream(args) as stream:
+                settings = DictationSettings(args)
+                recognizer = StreamingRecognizer(args.address, settings)
+                print('Recognizing...')
+                results = recognizer.recognize(stream)
+                print_results(results)
+                results_str = results[0]['transcript']
 
-    while True:
-        mic_to_directory(file_directory=directory)  #recording voice sample
-        args = DictationArgs(directory)
-        mazzny_condition = dd.is_distorted(file_directory=directory)
-        if not mazzny_condition:
-            break
-        else:
-            print('Please speak more quietly or try moving away from the microphone')
-            time.sleep(3)
-            print('speak: ')
-
-
-
-
-    if args.wave is not None or args.mic:
-        with create_audio_stream(args) as stream:
-            settings = DictationSettings(args)
-            recognizer = StreamingRecognizer(args.address, settings)
-            print('Recognizing...')
-            results = recognizer.recognize(stream)
-            print_results(results)
-            results_str = results[0]['transcript']
-
-            idx = search_over_phrases(results_str, phrases)
-            print(idx)
-            print(key_phrases[idx])
-            if idx != -1:
-                gif_dir = 'gifs/'+key_phrases[idx]+'.gif'
-                #gif_dir = 'gifs/500x500_sample(brak).gif'
-                print(gif_dir)
-                play_gif(gif_dir)
-            elif idx == -1:
-                idx = levenshtein_classification(results_str, phrases)
+                idx = search_over_phrases(results_str, phrases)
+                print(idx)
                 print(key_phrases[idx])
-                gif_dir = 'gifs/'+key_phrases[idx]+'.gif'
-                #gif_dir = 'gifs/500x500_sample(brak).gif'
-                print(gif_dir)
-                play_gif(gif_dir)
+                if idx != -1:
+                    gif_dir = 'gifs/' + key_phrases[idx] + '.gif'
+                    # gif_dir = 'gifs/500x500_sample(brak).gif'
+                    print(gif_dir)
+                    play_gif(gif_dir)
+                elif idx == -1:
+                    idx = levenshtein_classification(results_str, phrases)
+                    print(key_phrases[idx])
+                    gif_dir = 'gifs/' + key_phrases[idx] + '.gif'
+                    # gif_dir = 'gifs/500x500_sample(brak).gif'
+                    print(gif_dir)
+                    #play_gif(gif_dir)
 
-
+    return gif_dir
 
