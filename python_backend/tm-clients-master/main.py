@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# coding=utf-8
+# coding=utf-8 
 from dictation.dictation_client import create_audio_stream, print_results
 from dictation.service.dictation_settings import DictationSettings
 from dictation.service.streaming_recognizer import StreamingRecognizer
