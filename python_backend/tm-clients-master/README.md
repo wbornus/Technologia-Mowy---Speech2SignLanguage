@@ -29,7 +29,7 @@ Addresses and ports to the systems are stored in the json defined in address_pro
 
 ## Final Remarks
 
-* Client scripts has been tested with Python 3.6. For safety reasons create [virtual environment](https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html) for the project.
+* Client scripts has been tested with Python 3.6. For safety reasons create [virtual environment] (https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html) for the project.
 * When using PyCharm remember to mark directories *dictation* and *tts* as "Sources Root".  
 
  Contact: witkow at agh.edu.pl
