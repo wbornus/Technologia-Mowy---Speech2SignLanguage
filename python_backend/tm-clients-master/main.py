@@ -58,7 +58,7 @@ def classify():
             recognizer = StreamingRecognizer(args.address, settings)
             #print('Recognizing...')
             results = recognizer.recognize(stream)
-            print_results(results)
+            #print_results(results)
             results_str = results[0]['transcript']
 
             idx = search_over_phrases(results_str, phrases)
