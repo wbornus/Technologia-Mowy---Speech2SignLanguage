@@ -41,10 +41,10 @@ class MainWindow (QMainWindow):
         self.gif_holder1.move(450, 200)
         self.gif_holder1.adjustSize()
         self.gif_holder1.hide()
-        self.gif_holder = QMovieLabel("ui/animations/err.gif", self)
+        self.gif_holder = QMovieLabel("ui/animations/DnR.gif", self)
         self.gif_holder.move(300, 15)
         self.gif_holder.adjustSize()
-        self.gif_holder.hide()
+
 
 
 
@@ -88,9 +88,6 @@ class MainWindow (QMainWindow):
         self.banner.setFont(font2)
 
 
-        self.gif_holder.clear()
-        self.gif_holder1.clear()
-
 
         self.show()
 
@@ -131,7 +128,9 @@ class MainWindow (QMainWindow):
     @QtCore.pyqtSlot()
     def gif_display(self):
         #self.loading_animation()
+        #self.button.setDisabled(True)
         self.recording()
+        #self.button.setDisabled(False)
 
 class QMovieLabel(QLabel):
     def __init__(self, fileName, parent=None):
