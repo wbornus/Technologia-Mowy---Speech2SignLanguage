@@ -1,4 +1,4 @@
-grpcio==1.7.0
+grpcio==1.53.0
 pydub==0.20.0
 pyaudio
 grpcio-tools==1.7.0
